@@ -1,5 +1,7 @@
 
-
+/**
+ * JavaFX Application for Drawing Shapes
+ */
 
 import javafx.application.Application;
 import javafx.scene.canvas.Canvas;
@@ -7,7 +9,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-//import javafx.scene.layout.Priority;
 import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
@@ -34,12 +35,18 @@ public class App extends Application
     {
         primaryStage.setTitle("Drawing Shapes");
          
-    // Use a safe fixed canvas size and only add it to the center
-    BorderPane root = new BorderPane();
-    Canvas canvas = new Canvas(800, 500); // Safe fixed size
-    root.setCenter(canvas);
-    GraphicsContext gc = canvas.getGraphicsContext2D();
+        /**
+         * Initialize the drawing canvas and set up the main layout.
+         */
+        // Use a safe fixed canvas size and only add it to the center
+        BorderPane root = new BorderPane();
+        Canvas canvas = new Canvas(800, 500); // Safe fixed size
+        root.setCenter(canvas);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
 
+            /**
+             * Shape information controls
+             */
           Label areaLabel = new Label();
           DoubleProperty totalArea = new SimpleDoubleProperty();
           areaLabel.textProperty().bind(totalArea.asString("Total Area: %.2f"));
@@ -65,7 +72,10 @@ public class App extends Application
                     selectedShapeLabel.setText("No Shape Selected");
                 }
             });
-
+           
+            /**
+             * Shape selection controls
+             */
           // Controls
           ToggleGroup shapeToggle = new ToggleGroup();
           RadioButton rbRectangle = new RadioButton("Rectangle");
@@ -94,16 +104,46 @@ public class App extends Application
             redrawAll(gc); // Redraw all shapes using gc
         });
 
+        /**
+         * Layout setup
+         */
         VBox vbox = new VBox(10, new Label("Shape: "), rbCircle, rbRectangle, clear, areaLabel, countLabel, selectedShapeLabel, shapeListView);
         root.setLeft(vbox);
         Scene scene = new Scene(root, 800, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-    // Do not add the canvas to multiple parents or layouts
+        /**
+         * Keyboard shortcuts
+         */
+        scene.setOnKeyPressed(event -> {
+            switch (event.getCode()) {
+                case C:
+                    rbCircle.setSelected(true);
+                    shapes.add(new CircleShape(200, 200, 50, Color.BLUE));
+                    redrawAll(gc);
+                    break;
+                case R:
+                    rbRectangle.setSelected(true);
+                    shapes.add(new RectangleShape(50, 50, 100, 100, Color.RED));
+                    redrawAll(gc);
+                    break;
+                case X:
+                    shapes.clear();
+                    redrawAll(gc);
+                    break;
+                default:
+                    break;
+            }
+        });
 
+   
 
     }
+     /**
+      * Redraw all shapes on the canvas.
+      * @param gc
+      */
      private void redrawAll(GraphicsContext gc) 
           {
               gc.clearRect(0, 0, 800, 500); // Clear canvas
