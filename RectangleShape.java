@@ -22,4 +22,10 @@ public class RectangleShape implements DrawableShape
         gc.setStroke(color);
         gc.strokeRect(x, y, width, height);
     }
+
+    @Override
+    public double getArea() 
+    {
+        return width * height;
+    }
 }

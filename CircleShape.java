@@ -19,5 +19,11 @@ public class CircleShape implements DrawableShape
         gc.strokeOval(centerX, centerY, radius * 2, radius * 2);
     }
 
+    @Override
+    public double getArea() 
+    {
+        return Math.PI * radius * radius;
+    }
+
     
 }

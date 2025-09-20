@@ -1,18 +1,28 @@
 
+
+
+import javafx.application.Application;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.paint.Color;
-import javafx.application.Application;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.Scene;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.BorderPane;
+//import javafx.scene.layout.Priority;
+import javafx.scene.control.Label;
 import javafx.scene.control.Button;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.VBox;
+import javafx.scene.control.ListView;
+//import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.binding.Bindings;
+
+
 
 
 public class App extends Application 
@@ -24,9 +34,37 @@ public class App extends Application
     {
         primaryStage.setTitle("Drawing Shapes");
          
-         // Canvas
-          Canvas canvas = new Canvas(800, 500);
-          GraphicsContext gc = canvas.getGraphicsContext2D();
+    // Use a safe fixed canvas size and only add it to the center
+    BorderPane root = new BorderPane();
+    Canvas canvas = new Canvas(800, 500); // Safe fixed size
+    root.setCenter(canvas);
+    GraphicsContext gc = canvas.getGraphicsContext2D();
+
+          Label areaLabel = new Label();
+          DoubleProperty totalArea = new SimpleDoubleProperty();
+          areaLabel.textProperty().bind(totalArea.asString("Total Area: %.2f"));
+
+          shapes.addListener((javafx.collections.ListChangeListener.Change<? extends DrawableShape> change) -> {
+              double area = 0;
+              for (DrawableShape shape : shapes) {
+                  area += shape.getArea();
+              }
+              totalArea.set(area);
+          });
+
+          Label countLabel = new Label();
+          countLabel.textProperty().bind(Bindings.size(shapes).asString("Shapes: %d"));
+
+          ListView<DrawableShape> shapeListView = new ListView<>(shapes);
+
+          Label selectedShapeLabel = new Label();
+            shapeListView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+                if (newSelection != null) {
+                    selectedShapeLabel.setText("Selected Shape Area: " + String.format("%.2f", newSelection.getArea()));
+                } else {
+                    selectedShapeLabel.setText("No Shape Selected");
+                }
+            });
 
           // Controls
           ToggleGroup shapeToggle = new ToggleGroup();
@@ -56,13 +94,13 @@ public class App extends Application
             redrawAll(gc); // Redraw all shapes using gc
         });
 
-        VBox vbox = new VBox(10, rbCircle, rbRectangle, clear);
-        Scene scene = new Scene(vbox, 300, 200);
+        VBox vbox = new VBox(10, new Label("Shape: "), rbCircle, rbRectangle, clear, areaLabel, countLabel, selectedShapeLabel, shapeListView);
+        root.setLeft(vbox);
+        Scene scene = new Scene(root, 800, 500);
         primaryStage.setScene(scene);
         primaryStage.show();
 
-        VBox.setVgrow(canvas, Priority.ALWAYS);
-        vbox.getChildren().add(canvas);
+    // Do not add the canvas to multiple parents or layouts
 
 
     }
