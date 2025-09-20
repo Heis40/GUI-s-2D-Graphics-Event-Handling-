@@ -6,11 +6,11 @@ public class CircleShape implements DrawableShape
     private final double centerX, centerY, radius;
     private final Color color;
 
-    public CircleShape(double centerX, double centerY, double radius) {
+    public CircleShape(double centerX, double centerY, double radius, Color color) {
         this.centerX = centerX;
         this.centerY = centerY;
         this.radius = radius;
-        this.color = Color.BLUE;
+        this.color = color;
     }
 
     @Override

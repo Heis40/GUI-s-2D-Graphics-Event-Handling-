@@ -1,6 +1,6 @@
 
 import javafx.scene.canvas.Canvas;
-
+import javafx.scene.paint.Color;
 import javafx.application.Application;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.Scene;
@@ -17,7 +17,7 @@ import javafx.collections.ObservableList;
 
 public class App extends Application 
 {
-    private ObservableList<String> items = FXCollections.observableArrayList("Item 1", "Item 2", "Item 3");
+    private ObservableList<DrawableShape> shapes = FXCollections.observableArrayList();
 
     @Override
     public void start(Stage primaryStage) 
@@ -41,16 +41,19 @@ public class App extends Application
 
 
         //Change action to reflect drawing shapes
-        rbCircle.setOnMouseClicked(e -> {
-            gc.strokeOval(200, 200, 50, 50);
+        rbCircle.setOnAction(e -> {
+            shapes.add(new CircleShape(200, 200, 50, Color.BLUE)); // Add shape to list
+            redrawAll(gc); // Redraw all shapes using gc
         });
 
-        rbRectangle.setOnMouseClicked(e -> {
-            gc.strokeRect(50, 50, 100, 100);
+        rbRectangle.setOnAction(e -> {
+            shapes.add(new RectangleShape(50, 50, 100, 100, Color.RED)); // Add shape to list
+            redrawAll(gc); // Redraw all shapes using gc
         });
 
-        clear.setOnMouseClicked(e -> {
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());  
+        clear.setOnAction(e -> {
+            shapes.clear(); // Clear the list of shapes
+            redrawAll(gc); // Redraw all shapes using gc
         });
 
         VBox vbox = new VBox(10, rbCircle, rbRectangle, clear);
@@ -63,6 +66,14 @@ public class App extends Application
 
 
     }
+     private void redrawAll(GraphicsContext gc) 
+          {
+              gc.clearRect(0, 0, 800, 500); // Clear canvas
+              for (DrawableShape shape : shapes) {
+                  shape.draw(gc);
+              }
+          }
+
      public static void main(String[] args) 
         {
             launch(args);
