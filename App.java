@@ -28,7 +28,7 @@ import javafx.beans.binding.Bindings;
 
 public class App extends Application 
 {
-    private ObservableList<DrawableShape> shapes = FXCollections.observableArrayList();
+    private final ObservableList<DrawableShape> shapes = FXCollections.observableArrayList();
 
     @Override
     public void start(Stage primaryStage) 
